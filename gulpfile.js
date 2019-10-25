@@ -2,9 +2,11 @@ const spawn = require('child_process').spawn;
 const gulp = require('gulp');
 const babel = require('gulp-babel');
 const livereload = require('gulp-livereload');
+const path = require('path');
 
 const DIST_PATH = 'dist/';
 const BASE_OPTIONS = { base: '.' };
+const isWin = process.platform === "win32";
 
 gulp.task('html', () => {
   return gulp.src('index.html', BASE_OPTIONS)
@@ -24,7 +26,10 @@ gulp.task('js', () => {
 });
 
 gulp.task('run-electron', () => {
-  return spawn('node_modules/.bin/electron', ['./dist/src/main/index.js'], { stdio: 'inherit' }).on(
+  const extension = isWin ? '.cmd' : '';
+  const electronPath = path.join(__dirname, `node_modules/.bin/electron${extension}`);
+
+  return spawn(electronPath, ['./dist/src/main/index.js'], { stdio: 'inherit' }).on(
     'close',
     () => process.exit()
   );
